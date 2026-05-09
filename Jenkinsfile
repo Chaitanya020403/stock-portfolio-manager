@@ -75,11 +75,18 @@ pipeline {
         stage('Deploy with Ansible') {
             steps {
                 echo '========== Stage 6: Deploying via Ansible =========='
-                sh """
-                    ansible-playbook -i ansible/inventory/hosts.ini \
-                    ansible/playbooks/deploy.yml \
-                    --extra-vars "image_tag=${DOCKER_TAG}"
-                """
+                script {
+                    if (fileExists('ansible/playbooks/deploy.yml')) {
+                        sh """
+                            ansible-playbook -i ansible/inventory/hosts.ini \
+                            ansible/playbooks/deploy.yml \
+                            --extra-vars "image_tag=${DOCKER_TAG}"
+                        """
+                    } else {
+                        echo 'Ansible playbooks not yet available - skipping deploy stage'
+                        echo 'This stage will activate once Pankaj adds Ansible files'
+                    }
+                }
             }
         }
 
