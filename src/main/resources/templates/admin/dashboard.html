@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav>
+    <a class="brand" th:href="@{/portfolio}">📈 StockFolio</a>
+    <div>
+        <a th:href="@{/portfolio}">Portfolios</a>
+        <a th:href="@{/market}">Market</a>
+        <a th:href="@{/admin}">Admin</a>
+        <a th:href="@{/auth/logout}">Logout</a>
+    </div>
+</nav>
+<div class="container">
+    <h1>Admin Dashboard</h1>
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="stat-value" th:text="${userCount}"></div>
+            <div class="stat-label">Total Users</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" th:text="${portfolioCount}"></div>
+            <div class="stat-label">Total Portfolios</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" th:text="${transactions.size()}"></div>
+            <div class="stat-label">Total Transactions</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>All Users</h2>
+        <table>
+            <tr><th>ID</th><th>Username</th><th>Email</th><th>Role</th><th>Joined</th></tr>
+            <tr th:each="u : ${users}">
+                <td th:text="${u.id}"></td>
+                <td th:text="${u.username}"></td>
+                <td th:text="${u.email}"></td>
+                <td><span class="badge badge-info" th:text="${u.role}"></span></td>
+                <td th:text="${u.createdAt}"></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2>Recent Transactions</h2>
+        <table>
+            <tr><th>Portfolio</th><th>Symbol</th><th>Action</th><th>Qty</th><th>Price</th><th>Date</th></tr>
+            <tr th:each="tx : ${transactions}">
+                <td th:text="${tx.portfolio.name}"></td>
+                <td th:text="${tx.stockSymbol}"></td>
+                <td>
+                    <span class="badge"
+                          th:classappend="${tx.action.name() == 'BUY'} ? 'badge-success' : 'badge-danger'"
+                          th:text="${tx.action}"></span>
+                </td>
+                <td th:text="${tx.quantity}"></td>
+                <td th:text="'$' + ${tx.price}"></td>
+                <td th:text="${tx.executedAt}"></td>
+            </tr>
+        </table>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Market — Stock Portfolio</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav>
+    <a class="brand" th:href="@{/portfolio}">📈 StockFolio</a>
+    <div>
+        <a th:href="@{/portfolio}">Portfolios</a>
+        <a th:href="@{/market}">Market</a>
+        <a th:href="@{/auth/logout}">Logout</a>
+    </div>
+</nav>
+<div class="container">
+    <h1>Market Price Lookup</h1>
+    <div class="card">
+        <form th:action="@{/market/search}" method="get"
+              style="display:flex;gap:12px;align-items:flex-end">
+            <div style="flex:1">
+                <label>Stock Symbol</label>
+                <input type="text" name="symbol" placeholder="e.g. AAPL, TSLA, MSFT"
+                       th:value="${symbol}"/>
+            </div>
+            <button class="btn btn-primary" style="margin-bottom:14px">Search</button>
+        </form>
+    </div>
+
+    <div class="card" th:if="${quote != null and quote.containsKey('currentPrice')}">
+        <h2 th:text="${quote.symbol}"></h2>
+        <div class="stat-grid">
+            <div class="stat-card">
+                <div class="stat-value" th:text="'$' + ${quote.currentPrice}"></div>
+                <div class="stat-label">Current Price</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value"
+                     th:classappend="${quote.change >= 0} ? 'positive' : 'negative'"
+                     th:text="${quote.change}"></div>
+                <div class="stat-label">Change</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value"
+                     th:classappend="${quote.percentChange >= 0} ? 'positive' : 'negative'"
+                     th:text="${quote.percentChange} + '%'"></div>
+                <div class="stat-label">% Change</div>
+            </div>
+        </div>
+        <table style="margin-top:16px">
+            <tr>
+                <th>Open</th><th>High</th><th>Low</th><th>Previous Close</th>
+            </tr>
+            <tr>
+                <td th:text="'$' + ${quote.openPrice}"></td>
+                <td th:text="'$' + ${quote.highPrice}"></td>
+                <td th:text="'$' + ${quote.lowPrice}"></td>
+                <td th:text="'$' + ${quote.previousClose}"></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="card" th:if="${quote != null and quote.containsKey('error')}">
+        <p class="alert alert-error" th:text="${quote.error}"></p>
+    </div>
+</div>
+</body>
+</html>

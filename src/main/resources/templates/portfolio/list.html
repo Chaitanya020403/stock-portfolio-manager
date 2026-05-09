@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My Portfolios</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav>
+    <a class="brand" th:href="@{/portfolio}">📈 StockFolio</a>
+    <div>
+        <a th:href="@{/portfolio}">Portfolios</a>
+        <a th:href="@{/market}">Market</a>
+        <a th:href="@{/admin}" th:if="${currentUser.role.name() == 'ADMIN'}">Admin</a>
+        <a th:href="@{/auth/logout}">Logout</a>
+    </div>
+</nav>
+<div class="container">
+    <h1>My Portfolios</h1>
+    <div class="card">
+        <h2>Create New Portfolio</h2>
+        <form th:action="@{/portfolio/create}" th:object="${portfolioRequest}" method="post"
+              style="display:flex;gap:12px;align-items:flex-end">
+            <div style="flex:1">
+                <label>Portfolio Name</label>
+                <input type="text" th:field="*{name}" placeholder="e.g. Tech Stocks"/>
+            </div>
+            <button class="btn btn-success" style="margin-bottom:14px">+ Create</button>
+        </form>
+    </div>
+
+    <div th:if="${portfolios.empty}" class="card">
+        <p style="color:#888;text-align:center">No portfolios yet. Create one above!</p>
+    </div>
+
+    <div th:each="p : ${portfolios}" class="card"
+         style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+            <h2 th:text="${p.name}"></h2>
+            <span style="color:#888;font-size:0.85rem"
+                  th:text="'Created: ' + ${p.createdAt}"></span>
+        </div>
+        <div style="display:flex;gap:8px">
+            <a th:href="@{/portfolio/{id}/holdings(id=${p.id})}"
+               class="btn btn-info btn-sm">View Holdings</a>
+            <form th:action="@{/portfolio/delete/{id}(id=${p.id})}" method="post">
+                <button class="btn btn-danger btn-sm"
+                        onclick="return confirm('Delete this portfolio?')">Delete</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
